@@ -26,22 +26,22 @@
 
 #define DEBUG 1
 
-struct GROUP_CHAT
+typedef struct GROUP_CHAT
 {
-    char group_id;                                      //群聊id,从1开始累加
+    int groupid;                                       //群聊id,从1开始累加
     char group_name[20];                                //群聊名称
     char member_num;                                    //群聊成员数量
-    char member_id[MAX_GROUP_CHAT_USER_NUM];            //群聊内部的用户名单,填充用户ID
-};
+    int member_id[MAX_GROUP_CHAT_USER_NUM];            	//群聊内部的用户名单,填充用户ID
+}group_info;
 
 typedef struct USER_INFO
 {
     char user_name[20];                                 //用户登录名
     char user_passwd[20];                               //用户登录密码
-    char user_id;                                       //用户ID识别用户身份,不可重复,从1开始累加
+    int user_id;                                       	//用户ID识别用户身份,不可重复,从1开始累加
     char user_phone[11];                                //用户手机号，用于找回密码或修改密码
-    char friend_list[MAX_FRIEND_NUM];                   //用户好友列表,填充用户id,最大
-    struct GROUP_CHAT group_chat[MAX_GROUP_CHAT_NUM];   //用户加入的群聊相关信息
+    int friend_list[MAX_FRIEND_NUM];                    //用户好友列表,填充用户id,最大
+    int groupid[MAX_GROUP_CHAT_NUM];   					//用户加入的群聊相关信息
 }user_info;
 
 int user_login(void);

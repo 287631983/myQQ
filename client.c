@@ -41,7 +41,6 @@ int user_login()
 {
     int fd;
     int ret;
-#if !DEBUG
     struct sockaddr_in cin;
     /*与服务器建立TCP连接,用来验证输入的信息是否正确*/
     fd = socket(AF_INET,SOCK_STREAM,0);
@@ -60,7 +59,6 @@ int user_login()
         perror("user_login connect");
         exit(1);
     }
-#endif
     user_info user_login;
     printf("请输入您的用户名:\n");
 INPUT_USER_NAME:    
@@ -89,7 +87,6 @@ int user_register()
     int fd;
     int ret;
     struct sockaddr_in cin;
-#if !DEBUG
     /*与服务器建立TCP连接,用来验证输入的信息是否正确*/
     fd = socket(AF_INET,SOCK_STREAM,0);
     if(fd < 0)
@@ -107,18 +104,18 @@ int user_register()
         perror("user_register connect");
         exit(1);
     }
-#endif
+
     char user_input[20] = {};
     user_info user_register;
     printf("请输入您的账号:\n");
 INPUT_USER_NAME:
     memset(user_register.user_name,0,sizeof(user_register.user_name));
     scanf("%s",user_register.user_name);
-    if(verify_user_info(0,user_register) == VALUE_TRUE)
-    {
-        printf("账号已存在,请重新输入\n");
-        goto INPUT_USER_NAME;
-    }
+    // if(verify_user_info(0,user_register) == VALUE_TRUE)
+    // {
+    //     printf("账号已存在,请重新输入\n");
+    //     goto INPUT_USER_NAME;
+    // }
 INPUT_USER_PASSWD:
     /*输入密码*/
     printf("请输入您的密码:\n");
@@ -133,19 +130,15 @@ INPUT_USER_PASSWD:
         goto INPUT_USER_PASSWD;
     }
 
-    /*输入昵称*/
-    printf("请输入您的昵称:\n");
-    scanf("%s",user_register.user_name);
-
     /*输入手机号*/
     printf("请输入您的手机号:\n");
 INPUT_USER_PHONE:
     scanf("%s",user_register.user_phone);
-    if(verify_user_info(2,user_register) == VALUE_TRUE)
-    {
-        printf("手机号已被使用,请重新输入\n");
-        goto INPUT_USER_PHONE;
-    }
+    // if(verify_user_info(2,user_register) == VALUE_TRUE)
+    // {
+    //     printf("手机号已被使用,请重新输入\n");
+    //     goto INPUT_USER_PHONE;
+    // }
 
     /*{ "command": "verify", "class": "login name", "content": "287631983" }*/
     struct json_object *register_message = json_object_new_object();
@@ -159,15 +152,13 @@ INPUT_USER_PHONE:
     json_object_object_add(register_message,CMD_REGISTER_PASSWD,register_passwd);
     json_object_object_add(register_message,CMD_REGISTER_PHONE,register_phone);
     const char *register_str = json_object_to_json_string(register_message);
-#if !DEBUG
     ret = send(fd,register_str,strlen(register_str),0);
     if(ret < 0)
     {
         perror("user_register send user info");
         exit(1);
     }
-#endif
-    printf("注册成功!恭喜您成为我们的第?位用户\n");
+    printf("注册成功!\n");
     close(fd);
     return VALUE_TRUE;
 }
@@ -242,6 +233,12 @@ int verify_user_info(char verify_type,user_info user_input)
     int fd;
     int ret;
     struct sockaddr_in cin;
+    fd = socket(AF_INET,SOCK_STREAM,0);
+    if(fd < 0)
+    {
+        perror("socket");
+        return VALUE_FALSE;
+    }
     memset(&cin,0,sizeof(cin));
     cin.sin_addr.s_addr = inet_addr(SERVER_IP);
     cin.sin_family = AF_INET;
@@ -338,4 +335,5 @@ int verify_user_info(char verify_type,user_info user_input)
         }
         default:break;
     }
+    return VALUE_FALSE;
 }

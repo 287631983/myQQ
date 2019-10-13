@@ -14,7 +14,6 @@
 #include <sys/time.h>
 #include "/usr/local/include/json/json.h"
 #include <sqlite3.h>
-char *itoa(int num);
-int sqlite3_usercallback(void *ret,int columns,char **data,char **item);
-int sqlite3_groupcallback(void *ret,int columns,char **data,char **item);
+void process_register(void);
+void process_login(void);
 #endif
