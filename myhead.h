@@ -25,3 +25,4 @@
 //test git->branch feature
 //test git->branch feature2
 //test git->branch bug
+//test git->branch bug2
